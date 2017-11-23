@@ -1,0 +1,498 @@
+<html>
+    <head>
+        <title> Six Flags </title>
+        <style>
+            canvas { width: 100%; height: 100% }
+        </style>
+    </head>
+    <body>
+        <script src="three.min.js"> </script>
+        <script>
+
+            window.addEventListener('keydown',doKeyDown,true);
+
+                  var zpos = 65.00222399985905;
+                  var ypos = 100.0;
+                  var xpos = -17.805231559940662;
+                
+                  var car_zpos = 60.0;
+                  var car_xpos = 0.0;
+                  var car_rad = 0;
+                  var IZQUIERDA = (30*Math.PI)/180;
+                  var DERECHA = (-30*Math.PI)/180;
+                  var giro= 0;
+                  var anguloX = -1.4660765716333342;
+                  var anguloZ = 0;
+                function getPosition(){
+                    console.log("x: "+xpos+" y: "+ypos+" z:"+zpos);
+                    console.log("anguloX: "+anguloX+" anguloZ: "+anguloZ);
+                }
+                  var pi = 3.1415926535;
+                  function doKeyDown(evt){
+
+                      switch (evt.keyCode) {
+                          case 38:  /* Up arrow was pressed */
+                              var dx = 0.5 * Math.sin(anguloX);
+                              var dz = 0.5 * Math.cos(anguloX);
+                              zpos -= dz;
+                              xpos -= dx;
+                              break;
+                          case 40:  /* Down arrow was pressed */
+                              var dx = 0.5 * Math.sin(anguloX);
+                              var dz = 0.5 * Math.cos(anguloX);
+                              zpos += dz;
+                              xpos += dx;
+                              break;
+                          case 37:  /* Left arrow was pressed */
+                              anguloX += (3 * pi / 180);
+                              break;
+                          case 39:  /* Right arrow was pressed */
+                          anguloX -= (3 * pi/ 180);
+                          break;
+                          case 87:  /* W was pressed */
+                              camera.position.y += 0.5;
+                          break;
+                          case 83:  /* S was pressed */
+                              camera.position.y -= 0.5;
+                          break;
+                          case 65:  /* A was pressed */
+                              var dx = 0.5 * Math.sin(anguloX+(pi/2));
+                              var dz = 0.5 * Math.cos(anguloX+(pi/2));
+                              zpos -= dz;
+                              xpos -= dx;
+                          break;
+                          case 68:  /* D was pressed */
+                              var dx = 0.5 * Math.sin(anguloX-(pi/2));
+                              var dz = 0.5 * Math.cos(anguloX-(pi/2));
+                              zpos -= dz;
+                              xpos -= dx;
+                          break;
+                          case 86: //V abre cajuela
+                            if(grupo_cajuela.rotation.x >toRadians(-75)){
+                                grupo_cajuela.rotation.x -= 0.05;
+                                grupo_cajuela.position.z += 0.14;
+                                grupo_cajuela.position.y += 0.07;
+                            }
+                          break;
+                          case 66: //B cierra cajuela
+                            if(grupo_cajuela.rotation.x <toRadians(0)){
+                                grupo_cajuela.rotation.x += 0.05;
+                                grupo_cajuela.position.z -= 0.14;
+                                grupo_cajuela.position.y -= 0.07;
+                            }
+                        break;
+                        case 85:  /* U ABRE PUERTAS */
+                            if(grupo_puertaDerecha.rotation.y < toRadians(35)){
+                                grupo_puertaDerecha.rotation.y += 0.05;
+                                grupo_puertaDerecha.position.x +=0.265;
+                                grupo_puertaDerecha.position.z += 0.165;
+                            }
+                            if(grupo_puertaIzquierda.rotation.y > toRadians(-35)){
+                                grupo_puertaIzquierda.rotation.y -= 0.05;
+                                grupo_puertaIzquierda.position.x -=0.265;
+                                grupo_puertaIzquierda.position.z += 0.165;
+                            }
+                        break;
+                        case 74:  /* J CIERRA PUERTAS */
+                        if(grupo_puertaDerecha.rotation.y > toRadians(2)){
+                                grupo_puertaDerecha.rotation.y -= 0.05;
+                                grupo_puertaDerecha.position.x -=0.265;
+                                grupo_puertaDerecha.position.z -= 0.165;
+                            }
+                            if(grupo_puertaIzquierda.rotation.y < toRadians(-2)){
+                                grupo_puertaIzquierda.rotation.y += 0.05;
+                                grupo_puertaIzquierda.position.x +=0.265;
+                                grupo_puertaIzquierda.position.z -= 0.165;
+                            }
+                        break;
+                        case 89:  /* Y ABRE COFRE */
+                            if(grupo_cofre.rotation.x < toRadians(35)){
+                                grupo_cofre.rotation.x += 0.05;
+                                grupo_cofre.position.y += 0.2
+                                grupo_cofre.position.z += 0.05;
+
+                            }
+                            break;
+                        case 82:  /* R CIERRA COFRE */
+                            if( grupo_cofre.rotation.x > toRadians(2)){
+                                grupo_cofre.rotation.x -= 0.05;
+                                grupo_cofre.position.y -= 0.2;
+                                grupo_cofre.position.z -= 0.05;
+                            }
+                            break;
+                        case 84:  /* T AVANZA */
+                            var cdx = 3 * Math.sin(car_rad);
+                            var cdz = 3 * Math.cos(car_rad);
+                            car_zpos -= cdz;
+                            car_xpos -= cdx;
+                            if (giro == IZQUIERDA) {
+                                car_rad += (5* pi / 180);
+                            };
+                            if (giro == DERECHA) {
+                                car_rad -= (5* pi / 180);
+                            };
+                        break;
+                        case 71:  /* G RETROCEDE */
+                            var cdx = 3 * Math.sin(car_rad);
+                            var cdz = 3 * Math.cos(car_rad);
+                            car_zpos += cdz;
+                            car_xpos += cdx;
+                            if (giro == IZQUIERDA) {
+                                car_rad -= (5* pi / 180);
+                            };
+                            if (giro == DERECHA) {
+                                car_rad += (5* pi / 180);
+                            };
+                            break;
+                        case 70:  /* F IZQUIERDA */
+                        if (giro == 0) {
+                            giro = IZQUIERDA;
+                        };
+                        if (giro == DERECHA) {
+                            giro = 0;
+                        };
+
+                            break;
+                        case 72:  /* H DERECHA */
+                        if (giro == 0) {
+                           giro = DERECHA;
+                       };
+                        if (giro == IZQUIERDA) {
+                            giro = 0;
+                        };
+                            break;
+                        } //Fin switch
+
+            }//Fin funcion
+
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            var renderer = new THREE.WebGLRenderer();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            //Materiales
+            
+            var mateRueda = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true  });
+            
+            //Inicio del carro
+            var texturaCoche = new THREE.MeshPhongMaterial({ map: THREE.ImageUtils.loadTexture("img/coche.jpg")});
+            
+
+            var texturaVentanas = new THREE.MeshPhongMaterial    ({ 
+                            ambient: 0x050505, 
+                            color: 0x16e1bd, 
+                            specular: 0x555555,
+                            transparent: true, 
+                            opacity: 0.5,
+                            shininess: 30});
+
+            var texturaLlantas = new THREE.MeshPhongMaterial({ map: THREE.ImageUtils.loadTexture("img/Tires.jpg")});
+            
+            var texturaLateralIzq = new THREE.MeshPhongMaterial({ map: THREE.ImageUtils.loadTexture("img/LATERALIZ.png")});
+            
+            var materialArray = [];
+            materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'img/LATERALIZ.png' ), transparent: true, opacity: 1, color: 0x4bb7d8 }));
+            materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'img/LATERALIZ.png' ), transparent: true, opacity: 1, color: 0x4bb7d8 }));
+            materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'img/LATERALIZ.png' ), transparent: true, opacity: 1, color: 0x4bb7d8 }));
+            materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'img/LATERALIZ.png' ), transparent: true, opacity: 1, color: 0x4bb7d8 }));
+            materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'img/LATERALIZ.png' ), transparent: true, opacity: 1, color: 0x4bb7d8 }));
+            materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'img/LATERALIZ.png' ), transparent: true, opacity: 1, color: 0x4bb7d8 }));
+            
+            var MovingCubeMat = new THREE.MeshFaceMaterial(materialArray);
+            var MovingCubeGeom = new THREE.CubeGeometry( 50, 50, 50, 1, 1, 1, materialArray );
+            MovingCube = new THREE.Mesh( MovingCubeGeom, MovingCubeMat );
+            MovingCube.position.set(0, 25.1, 0);
+            scene.add( MovingCube );    
+        
+            var grupo_autocompleto = new THREE.Object3D();
+            var grupo_partetrasera = new THREE.Object3D();
+            var grupo_cajuela = new THREE.Object3D();
+            var grupo_partedelantera = new THREE.Object3D();
+            var grupo_puertaIzquierda = new THREE.Object3D();
+            var grupo_puertaDerecha = new THREE.Object3D();
+            var grupo_cofre = new THREE.Object3D();
+            var grupo_llantas = new THREE.Object3D();
+            var grupo_llantasDelanteras = new THREE.Object3D();
+
+            //Inicio de parte trasera izquierda del carro
+            ////////////////////////////////////////////////////////////////////////////////
+            var traseroizquierdo_geom = new THREE.BoxGeometry(0.6,7,10);
+            var traseroizquierdo_mesh = new THREE.Mesh(traseroizquierdo_geom, texturaLateralIzq);
+            traseroizquierdo_mesh.position.y += 0;
+            traseroizquierdo_mesh.position.x -= 5;
+
+            //Inicio de parte trasera derecha del carro
+
+            var traseroderecho_geom = new THREE.BoxGeometry(0.6,10,14);
+            var traseroderecho_mesh = new THREE.Mesh(traseroderecho_geom, texturaCoche);
+            traseroderecho_mesh.position.y += 1.5;
+            traseroderecho_mesh.position.x += 5.1;
+            traseroderecho_mesh.position.z -= 2;
+            //Inicio de grupo parte trasera del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+           grupo_partetrasera.position.z +=10;
+            grupo_partetrasera.add(traseroizquierdo_mesh);
+            grupo_partetrasera.add(traseroderecho_mesh);
+
+            //Inicio de cajuela del carro
+            ////////////////////////////////////////////////////////////////////////////////
+            var cajuela_geom = new THREE.BoxGeometry(10,7,0.3);
+            var cajuela_mesh = new THREE.Mesh(cajuela_geom, texturaCoche);
+            grupo_cajuela.add(cajuela_mesh);
+            grupo_cajuela.position.z += 4.5;
+            cajuela_mesh.position.z += 0.5;
+
+            var llantaR_geom = new THREE.CylinderGeometry( 2.5, 2.5, 1, 100, 100 );
+            var llantaR_mesh = new THREE.Mesh(llantaR_geom,texturaLlantas);
+            llantaR_mesh.position.z = +1;
+            llantaR_mesh.rotation.x += toRadians(90);
+
+            grupo_partetrasera.add(grupo_cajuela);
+            grupo_cajuela.add(llantaR_mesh);
+
+            //Inicio de techo del carro
+            ////////////////////////////////////////////////////////////////////////////////
+            var techo_geom = new THREE.BoxGeometry(10,0.6,20);
+            var techo_mesh = new THREE.Mesh(techo_geom, texturaCoche);
+            techo_mesh.position.z += 5;
+            techo_mesh.position.y += 3.4;
+            grupo_autocompleto.add(techo_mesh);
+
+            //Inicio de suelo del carro
+            ////////////////////////////////////////////////////////////////////////////////
+            var suelo_geom = new THREE.BoxGeometry(10,0.6,28);
+            var suelo_mesh = new THREE.Mesh(suelo_geom, texturaCoche);
+            suelo_mesh.position.z += 1;
+            suelo_mesh.position.y -= 3.5;
+            grupo_autocompleto.add(suelo_mesh);
+
+            //Inicio de ventada y puerta derecha del carro
+            ////////////////////////////////////////////////////////////////////////////////
+            var ventanaD_geom = new THREE.BoxGeometry(0.6,3,10);
+            var ventanaD_mesh = new THREE.Mesh(ventanaD_geom, texturaVentanas);
+            ventanaD_mesh.position.x += 5;
+            ventanaD_mesh.position.y += 2;
+
+            var puertaD_geom = new THREE.BoxGeometry(0.6,4,10);
+            var puertaD_mesh = new THREE.Mesh(puertaD_geom, texturaCoche);
+            puertaD_mesh.position.x += 5;
+            puertaD_mesh.position.y -= 1.5;
+
+            //Inicio de ventada y puerta izquierda del carro
+            ////////////////////////////////////////////////////////////////////////////////
+            var ventanaI_geom = new THREE.BoxGeometry(0.6,3,10);
+            var ventanaI_mesh = new THREE.Mesh(ventanaI_geom, texturaVentanas);
+            ventanaI_mesh.position.x -= 5;
+            ventanaI_mesh.position.y += 2;
+
+            var puertaI_geom = new THREE.BoxGeometry(0.6,4,10);
+            var puertaI_mesh = new THREE.Mesh(puertaI_geom, texturaCoche);
+            puertaI_mesh.position.x -= 5;
+            puertaI_mesh.position.y -= 1.5;
+
+            //Inicio de grupo ventadas y puertas del carro
+            ////////////////////////////////////////////////////////////////////////////////
+            grupo_puertaDerecha.add(ventanaD_mesh);
+            grupo_puertaDerecha.add(puertaD_mesh);
+            grupo_puertaIzquierda.add(ventanaI_mesh);
+            grupo_puertaIzquierda.add(puertaI_mesh);
+
+            //Inicio de parte delantera derecha del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+            var delanteroDerecho_geom = new THREE.BoxGeometry(0.6,4,8);
+            var delanteroDerecho_mesh = new THREE.Mesh(delanteroDerecho_geom, texturaCoche);
+            delanteroDerecho_mesh.position.x += 5;
+            delanteroDerecho_mesh.position.y -= 1.5;
+            //Inicio de parte delantera izquierda del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+            var delanteroIzquierdo_geom = new THREE.BoxGeometry(0.6,4,8);
+            var delanteroIzquierdo_mesh = new THREE.Mesh(delanteroIzquierdo_geom, texturaCoche);
+            delanteroIzquierdo_mesh.position.x -= 5;
+            delanteroIzquierdo_mesh.position.y -= 1.5;
+
+            //Inicio de defensa del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+            var defensa_geom = new THREE.BoxGeometry(10,3.7,0.3);
+            var defensa_mesh = new THREE.Mesh(defensa_geom, texturaCoche);
+            defensa_mesh.position.z -= 4;
+            defensa_mesh.position.y -= 1.4;
+
+            //Inicio de cofre del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+            var cofre_geom = new THREE.BoxGeometry(10,0.3,8);
+            var cofre_mesh = new THREE.Mesh(cofre_geom, texturaCoche);
+            grupo_cofre.position.y += 0.3;
+            grupo_cofre.add(cofre_mesh);
+
+            //Inicio de espejo delantero del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+            var espejoE_geom = new THREE.BoxGeometry(10,3,0.6);
+            var espejoE_mesh = new THREE.Mesh(espejoE_geom, texturaVentanas);
+            espejoE_mesh.position.z +=4.1;
+            espejoE_mesh.position.y += 2;
+
+          
+
+            //Inicio de grupo parte delantero del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+            grupo_partedelantera.position.z -=8.8;
+            grupo_partedelantera.add(delanteroIzquierdo_mesh);
+            grupo_partedelantera.add(delanteroDerecho_mesh);
+            grupo_partedelantera.add(defensa_mesh);
+            grupo_partedelantera.add(espejoE_mesh);
+            grupo_partedelantera.add(grupo_cofre);
+
+            //Inicio de llantas del carro
+            ////////////////////////////////////////////////////////////////////////////////
+
+            var texturaRines = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("img/rines.jpg")});
+            var llantaAD_geom = new THREE.CylinderGeometry( 2.5, 2.5, 1, 100, 100 );
+            var rinAD_geom = new THREE.CylinderGeometry( 1.8, 1.8, 1.1, 100, 100 );
+            var llantaAD_mesh = new THREE.Mesh(llantaAD_geom,texturaLlantas);
+            var rinAD_mesh = new THREE.Mesh(rinAD_geom,texturaRines);
+            
+            llantaAD_mesh.position.z = +8.5;
+            llantaAD_mesh.position.x += 5.5;
+            llantaAD_mesh.position.y -= 3.5;
+            llantaAD_mesh.rotation.z += toRadians(90);
+            rinAD_mesh.position.z = +8.5;
+            rinAD_mesh.position.x += 5.5;
+            rinAD_mesh.position.y -= 3.5;
+            rinAD_mesh.rotation.z += toRadians(90);
+
+            var llantaDD_geom = new THREE.CylinderGeometry( 2.5, 2.5, 1, 100, 100 );
+            var rinDD_geom = new THREE.CylinderGeometry( 1.8, 1.8, 1.1, 100, 100 );
+            var llantaDD_mesh = new THREE.Mesh(llantaDD_geom,texturaLlantas);
+            var rinDD_mesh = new THREE.Mesh(rinDD_geom,texturaRines);
+            llantaDD_mesh.position.z = -9;
+            llantaDD_mesh.position.x += 5.5;
+            llantaDD_mesh.position.y -= 3.5;
+            llantaDD_mesh.rotation.z += toRadians(90);
+            rinDD_mesh.position.z = -9;
+            rinDD_mesh.position.x += 5.5;
+            rinDD_mesh.position.y -= 3.5;
+            rinDD_mesh.rotation.z += toRadians(90);
+
+            var llantaAI_geom = new THREE.CylinderGeometry( 2.5, 2.5, 1, 100, 100 );
+            var rinAI_geom = new THREE.CylinderGeometry( 1.8, 1.8, 1.1, 100, 100 );
+            var llantaAI_mesh = new THREE.Mesh(llantaAI_geom,texturaLlantas);
+            var rinAI_mesh = new THREE.Mesh(rinAI_geom,texturaRines);
+            llantaAI_mesh.position.z = +8.5;
+            llantaAI_mesh.position.x -= 5.5;
+            llantaAI_mesh.position.y -= 3.5;
+            llantaAI_mesh.rotation.z += toRadians(90);
+            rinAI_mesh.position.z = +8.5;
+            rinAI_mesh.position.x -= 5.5;
+            rinAI_mesh.position.y -= 3.5;
+            rinAI_mesh.rotation.z += toRadians(90);
+
+            var llantaDI_geom = new THREE.CylinderGeometry( 2.5, 2.5, 1, 100, 100 );
+            var rinDI_geom = new THREE.CylinderGeometry( 1.8, 1.8, 1.1, 100, 100 );
+            var llantaDI_mesh = new THREE.Mesh(llantaDI_geom,texturaLlantas);
+            var rinDI_mesh = new THREE.Mesh(rinDI_geom,texturaRines);
+            llantaDI_mesh.position.z = -9;
+            llantaDI_mesh.position.x -= 5.5;
+            llantaDI_mesh.position.y -= 3.5;
+            llantaDI_mesh.rotation.z += toRadians(90);
+            rinDI_mesh.position.z = -9;
+            rinDI_mesh.position.x -= 5.5;
+            rinDI_mesh.position.y -= 3.5;
+            rinDI_mesh.rotation.z += toRadians(90);
+
+            grupo_llantasDelanteras.add(llantaDD_mesh);
+            grupo_llantasDelanteras.add(rinDD_mesh);
+            grupo_llantasDelanteras.add(llantaDI_mesh);
+            grupo_llantasDelanteras.add(rinDI_mesh);
+
+            grupo_llantas.add(llantaAD_mesh);
+            grupo_llantas.add(rinAD_mesh);
+            grupo_llantas.add(grupo_llantasDelanteras);
+            grupo_llantas.add(llantaAI_mesh);
+            grupo_llantas.add(rinAI_mesh);
+
+            grupo_autocompleto.add(grupo_puertaDerecha);
+            grupo_autocompleto.add(grupo_puertaIzquierda);
+            grupo_autocompleto.add(grupo_partetrasera);
+            grupo_autocompleto.add(grupo_partedelantera);
+            grupo_autocompleto.add(grupo_llantas);
+            scene.add(grupo_autocompleto);
+
+            //Fin del carro
+
+
+                        
+            //color del fondo
+            renderer.setClearColor(0xe6ffff, 1);
+
+            var pointLight = new THREE.PointLight( 0xFFFFFF );
+            var pointLight2 = new THREE.PointLight( 0xFFFFAA );
+            var pointLight3 = new THREE.PointLight( 0xFFFFAA );
+            var pointLight4 = new THREE.PointLight( 0xFFFFAA );
+            var pointLight5 = new THREE.PointLight( 0xFFFFAA );
+
+            pointLight.position.x = 10;
+            pointLight.position.y = 50;
+            pointLight.position.z = 130;
+
+            scene.add(pointLight);
+
+            pointLight2.position.x = 10;
+            pointLight2.position.y = 50;
+            pointLight2.position.z = -130;
+
+            scene.add(pointLight2);
+
+            pointLight3.position.x = 130;
+            pointLight3.position.y = 50;
+            pointLight3.position.z = 0;
+
+            scene.add(pointLight3);
+
+            pointLight4.position.x = -130;
+            pointLight4.position.y = 50;
+            pointLight4.position.z = 0;
+
+            scene.add(pointLight4);
+
+            pointLight5.position.x = 0;
+            pointLight5.position.y = 160;
+            pointLight5.position.z = 0;
+
+            scene.add(pointLight5);
+            var render = function () {
+                requestAnimationFrame(render);
+
+                //Camara
+                camera.position.z = zpos;
+                camera.rotation.y = 4;
+                camera.position.x = xpos;
+                camera.rotation.y = anguloX;
+                camera.rotation.x = anguloZ;
+
+                grupo_autocompleto.position.x = car_xpos;
+                grupo_autocompleto.position.z = car_zpos;
+                grupo_autocompleto.rotation.y = car_rad;
+                llantaDD_mesh.rotation.y = giro;
+                rinDD_mesh.rotation.y = giro;
+                llantaDI_mesh.rotation.y = giro;
+                rinDI_mesh.rotation.y = giro;
+
+                renderer.render(scene, camera);
+            };
+            render();
+            function toRadians(angle)
+            {
+                return Math.PI * angle / 180.0;
+            }
+        </script>
+    </body>
+</html>
